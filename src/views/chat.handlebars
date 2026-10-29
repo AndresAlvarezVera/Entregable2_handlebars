@@ -1,0 +1,101 @@
+<main class="w-full max-w-5xl h-[88vh] flex flex-col gap-5 relative z-10">
+
+    <!-- Banner Superior -->
+    <header class="w-full py-3 cyber-panel flex items-center justify-center">
+        <h1 class="text-2xl md:text-3xl font-black tracking-[0.35em] neon-text uppercase">
+            Publicidad
+        </h1>
+    </header>
+
+    <!-- Username -->
+    <div class="w-full flex justify-start pl-1">
+        <h2 class="text-base md:text-lg font-bold tracking-widest text-[#00f3ff]">
+            USERNAME: <span class="font-bold text-white tracking-normal"
+                style="text-shadow: 0 0 10px var(--neon-blue);">{{username}}</span>
+        </h2>
+    </div>
+
+    <!-- Controles de mensaje -->
+    <div class="w-full flex flex-col md:flex-row items-center gap-3">
+        <label for="chat-input" class="font-bold text-base tracking-wider neon-text w-full md:w-auto text-left">
+            MENSAJE:
+        </label>
+
+        <div class="flex-grow w-full">
+            <input id="chat-input" type="text" placeholder="INGRESE EL MENSAJE..."
+                class="w-full px-4 py-3 input-cyber rounded-none" autocomplete="off">
+        </div>
+
+        <button id="send-btn" class="w-full md:w-auto px-8 py-3 font-bold btn-neon uppercase tracking-widest">
+            Enviar
+        </button>
+    </div>
+
+    <!-- Ventana de Chat Principal -->
+    <section class="w-full flex-grow neon-box flex flex-col p-4 md:p-6 overflow-hidden relative">
+        <div id="chat-messages"
+            class="w-full h-full overflow-y-auto flex flex-col gap-4 font-['Rajdhani'] text-lg pr-2">
+
+            <!-- Mensaje Inicial de Sistema -->
+            <div class="flex flex-col gap-1 border-l-2 border-[#00f3ff] pl-3 bg-black/40 py-1">
+                <span class="text-xs font-bold tracking-widest text-[#00f3ff]">[SISTEMA - 11:04 AM]</span>
+                <p class="text-gray-300">Terminal conectada. Protocolo Technopunk activo.</p>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const chatMessages = document.getElementById('chat-messages');
+        const username = "{{username}}"; // Variable obtenida de Handlebars
+
+        // Función para enviar mensaje
+        function sendMessage() {
+            const messageText = chatInput.value.trim();
+            if (!messageText) return; // Ignorar si está vacío
+
+            // Formatear hora actual (HH:MM AM/PM)
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            // Crear el elemento contenedor del mensaje
+            const messageContainer = document.createElement('div');
+            messageContainer.className = 'flex flex-col gap-1 items-end mt-2';
+
+            // Estructura interna del mensaje enviado por el usuario
+            messageContainer.innerHTML = `
+                <span class="text-xs font-bold tracking-widest text-[#00f3ff]">[${username} - ${timeString}]</span>
+                <p class="bg-[#00f3ff]/15 border border-[#00f3ff]/50 px-4 py-2 text-[#00f3ff] shadow-[0_0_15px_rgba(0,243,255,0.15)] max-w-[80%] break-words">
+                </p>
+            `;
+
+            // Insertar el texto de forma segura para prevenir inyección HTML
+            messageContainer.querySelector('p').textContent = messageText;
+
+            // Agregar al historial de chat
+            chatMessages.appendChild(messageContainer);
+
+            // Limpiar el campo de texto
+            chatInput.value = '';
+
+            // Desplazar el scroll al final automáticamente
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Evento al hacer clic en el botón ENVIAR
+        sendBtn.addEventListener('click', sendMessage);
+
+        // Evento al presionar ENTER dentro del input
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    });
+</script>
